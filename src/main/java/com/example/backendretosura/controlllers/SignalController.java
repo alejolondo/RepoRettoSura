@@ -1,6 +1,8 @@
 package com.example.backendretosura.controlllers;
 
+import com.example.backendretosura.models.Category;
 import com.example.backendretosura.models.Signal;
+import com.example.backendretosura.services.Service;
 import com.example.backendretosura.services.SignalService;
 import com.kwabenaberko.newsapilib.NewsApiClient;
 import com.kwabenaberko.newsapilib.models.request.EverythingRequest;
@@ -21,6 +23,9 @@ public class SignalController {
 
 @Autowired
 private SignalService serviceSignal;
+
+@Autowired
+private Service service;
 
 
 @GetMapping("/signals")
@@ -82,6 +87,11 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
 public ResponseEntity<String> deleteSignal(@PathVariable("id")String id){
     serviceSignal.deleteSignal(id);
     return  new ResponseEntity<>("El registro fue borrado exitosamente", HttpStatus.OK);
+}
+
+@GetMapping("/categories")
+    public List<Category> findAll(){
+    return service.findAll();
 }
 
 
