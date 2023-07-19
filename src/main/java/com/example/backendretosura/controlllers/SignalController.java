@@ -56,17 +56,50 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
             new NewsApiClient.ArticlesResponseCallback() {
                 @Override
                 public void onSuccess(ArticleResponse response) {
-                    Signal signal = new Signal();
-                    signal.setTitle(response.getArticles().get(0).getTitle());
-                    signal.setDescription(response.getArticles().get(0).getDescription());
-                    signal.setUrl(response.getArticles().get(0).getUrl());
-                    signal.setUrlToImage(response.getArticles().get(0).getUrlToImage());
-                    signal.setPublishedAt(response.getArticles().get(0).getPublishedAt());
-                    Date fechaActual = new Date();
-                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                    String fechaString = formato.format(fechaActual);
-                    signal.setCreatedAt(fechaString);
-                    serviceSignal.saveSignal(signal);
+
+                    int index = 0;
+
+
+                    while (index < response.getArticles().size()) {
+                        String title = response.getArticles().get(index).getTitle();
+
+                        
+                        List<Signal> isTitle = serviceSignal.findByTitle(title);
+                        if (isTitle.isEmpty()) {
+
+                            Signal signal = new Signal();
+                            signal.setTitle(title);
+                            signal.setDescription(response.getArticles().get(index).getDescription());
+                            signal.setUrl(response.getArticles().get(index).getUrl());
+                            signal.setUrlToImage(response.getArticles().get(index).getUrlToImage());
+                            signal.setPublishedAt(response.getArticles().get(index).getPublishedAt());
+
+                            Date fechaActual = new Date();
+                            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                            String fechaString = formato.format(fechaActual);
+                            signal.setCreatedAt(fechaString);
+
+                            serviceSignal.saveSignal(signal);
+                            break;
+                        }
+
+
+                        index++;
+                    }
+
+
+
+//                    Signal signal = new Signal();
+//                    signal.setTitle(response.getArticles().get(0).getTitle());
+//                    signal.setDescription(response.getArticles().get(0).getDescription());
+//                    signal.setUrl(response.getArticles().get(0).getUrl());
+//                    signal.setUrlToImage(response.getArticles().get(0).getUrlToImage());
+//                    signal.setPublishedAt(response.getArticles().get(0).getPublishedAt());
+//                    Date fechaActual = new Date();
+//                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+//                    String fechaString = formato.format(fechaActual);
+//                    signal.setCreatedAt(fechaString);
+//                    serviceSignal.saveSignal(signal);
 
                     System.out.println(response.getArticles().get(0).getTitle() + response.getArticles().get(0).getDescription() );
                 }
@@ -93,6 +126,8 @@ public ResponseEntity<String> deleteSignal(@PathVariable("id")String id){
     public List<Category> findAll(){
     return service.findAll();
 }
+
+
 
 
 

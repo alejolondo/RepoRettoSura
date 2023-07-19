@@ -30,6 +30,10 @@ public class SignalService {
         repoSignal.deleteById(id);
     }
 
+    public List<Signal> findByTitle(String title){
+        return repoSignal.findByTitleContains(title);
+    }
+
 
 
 
