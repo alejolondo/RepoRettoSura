@@ -5,6 +5,7 @@ import com.example.backendretosura.models.Signal;
 import com.example.backendretosura.services.Service;
 import com.example.backendretosura.services.SignalService;
 import com.kwabenaberko.newsapilib.NewsApiClient;
+
 import com.kwabenaberko.newsapilib.models.request.EverythingRequest;
 import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
 
     NewsApiClient newsApiClient = new NewsApiClient("6b0d3571b57441efa7d17c55ba788c5f");
     newsApiClient.getEverything(
-            new EverythingRequest.Builder()
+            new  EverythingRequest.Builder()
                     .q(query)
                     .build(),
             new NewsApiClient.ArticlesResponseCallback() {
@@ -63,10 +64,9 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
                     while (index < response.getArticles().size()) {
                         String title = response.getArticles().get(index).getTitle();
 
-                        
+
                         List<Signal> isTitle = serviceSignal.findByTitle(title);
                         if (isTitle.isEmpty()) {
-
                             Signal signal = new Signal();
                             signal.setTitle(title);
                             signal.setDescription(response.getArticles().get(index).getDescription());
@@ -80,6 +80,7 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
                             signal.setCreatedAt(fechaString);
 
                             serviceSignal.saveSignal(signal);
+
                             break;
                         }
 
@@ -87,33 +88,19 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
                         index++;
                     }
 
-
-
-//                    Signal signal = new Signal();
-//                    signal.setTitle(response.getArticles().get(0).getTitle());
-//                    signal.setDescription(response.getArticles().get(0).getDescription());
-//                    signal.setUrl(response.getArticles().get(0).getUrl());
-//                    signal.setUrlToImage(response.getArticles().get(0).getUrlToImage());
-//                    signal.setPublishedAt(response.getArticles().get(0).getPublishedAt());
-//                    Date fechaActual = new Date();
-//                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-//                    String fechaString = formato.format(fechaActual);
-//                    signal.setCreatedAt(fechaString);
-//                    serviceSignal.saveSignal(signal);
-
-                    System.out.println(response.getArticles().get(0).getTitle() + response.getArticles().get(0).getDescription() );
                 }
-
 
                 @Override
                 public void onFailure(Throwable throwable) {
                     System.out.println(throwable.getMessage());
+                
+
                 }
             }
     );
 
 
-    return new ResponseEntity<>( HttpStatus.CREATED);
+    return new ResponseEntity<>(HttpStatus.CREATED);
 }
 
 @DeleteMapping("/signals/{id}")
