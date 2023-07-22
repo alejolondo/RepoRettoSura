@@ -6,7 +6,9 @@ import com.example.backendretosura.services.Service;
 import com.example.backendretosura.services.SignalService;
 import com.kwabenaberko.newsapilib.NewsApiClient;
 import com.kwabenaberko.newsapilib.models.request.EverythingRequest;
+import com.kwabenaberko.newsapilib.models.request.SourcesRequest;
 import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
+import com.kwabenaberko.newsapilib.models.response.SourcesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,43 +51,54 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
 
 
     NewsApiClient newsApiClient = new NewsApiClient("6b0d3571b57441efa7d17c55ba788c5f");
-    newsApiClient.getEverything(
-            new EverythingRequest.Builder()
-                    .q(query)
+
+    //Implementación país
+    newsApiClient.getSources(
+            new SourcesRequest.Builder()
+                    .language("es")
+                    .country("co")
                     .build(),
-            new NewsApiClient.ArticlesResponseCallback() {
+            new NewsApiClient.SourcesCallback() {
                 @Override
-                public void onSuccess(ArticleResponse response) {
+                public void onSuccess(SourcesResponse response) {
+                    newsApiClient.getEverything(
+                            new EverythingRequest.Builder()
+                                    .q(query)
+                                    .language("es")
+                                    .build(),
+                            new NewsApiClient.ArticlesResponseCallback() {
+                                @Override
+                                public void onSuccess(ArticleResponse response) {
 
-                    int index = 0;
-
-
-                    while (index < response.getArticles().size()) {
-                        String title = response.getArticles().get(index).getTitle();
-
-                        
-                        List<Signal> isTitle = serviceSignal.findByTitle(title);
-                        if (isTitle.isEmpty()) {
-
-                            Signal signal = new Signal();
-                            signal.setTitle(title);
-                            signal.setDescription(response.getArticles().get(index).getDescription());
-                            signal.setUrl(response.getArticles().get(index).getUrl());
-                            signal.setUrlToImage(response.getArticles().get(index).getUrlToImage());
-                            signal.setPublishedAt(response.getArticles().get(index).getPublishedAt());
-
-                            Date fechaActual = new Date();
-                            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                            String fechaString = formato.format(fechaActual);
-                            signal.setCreatedAt(fechaString);
-
-                            serviceSignal.saveSignal(signal);
-                            break;
-                        }
+                                    int index = 0;
 
 
-                        index++;
-                    }
+                                    while (index < response.getArticles().size()) {
+                                        String title = response.getArticles().get(index).getTitle();
+
+
+                                        List<Signal> isTitle = serviceSignal.findByTitle(title);
+                                        if (isTitle.isEmpty()) {
+
+                                            Signal signal = new Signal();
+                                            signal.setTitle(title);
+                                            signal.setDescription(response.getArticles().get(index).getDescription());
+                                            signal.setUrl(response.getArticles().get(index).getUrl());
+                                            signal.setUrlToImage(response.getArticles().get(index).getUrlToImage());
+                                            signal.setPublishedAt(response.getArticles().get(index).getPublishedAt());
+
+                                            Date fechaActual = new Date();
+                                            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                                            String fechaString = formato.format(fechaActual);
+                                            signal.setCreatedAt(fechaString);
+
+                                            serviceSignal.saveSignal(signal);
+                                            break;
+                                        }
+
+
+                                        index++;
+                                    }
 
 
 
@@ -101,9 +114,17 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
 //                    signal.setCreatedAt(fechaString);
 //                    serviceSignal.saveSignal(signal);
 
-                    System.out.println(response.getArticles().get(0).getTitle() + response.getArticles().get(0).getDescription() );
-                }
+                                    System.out.println(response.getArticles().get(0).getTitle() + response.getArticles().get(0).getDescription() );
+                                }
 
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    System.out.println(throwable.getMessage());
+                                }
+                            }
+                    );;
+                }
 
                 @Override
                 public void onFailure(Throwable throwable) {
@@ -111,6 +132,71 @@ public ResponseEntity<Void> saveSignal(@PathVariable("query") String query){
                 }
             }
     );
+
+    //IMPLEMENTACION SIN PAIS
+//    newsApiClient.getEverything(
+//            new EverythingRequest.Builder()
+//                    .q(query)
+//                    .language("es")
+//                    .build(),
+//            new NewsApiClient.ArticlesResponseCallback() {
+//                @Override
+//                public void onSuccess(ArticleResponse response) {
+//
+//                    int index = 0;
+//
+//
+//                    while (index < response.getArticles().size()) {
+//                        String title = response.getArticles().get(index).getTitle();
+//
+//
+//                        List<Signal> isTitle = serviceSignal.findByTitle(title);
+//                        if (isTitle.isEmpty()) {
+//
+//                            Signal signal = new Signal();
+//                            signal.setTitle(title);
+//                            signal.setDescription(response.getArticles().get(index).getDescription());
+//                            signal.setUrl(response.getArticles().get(index).getUrl());
+//                            signal.setUrlToImage(response.getArticles().get(index).getUrlToImage());
+//                            signal.setPublishedAt(response.getArticles().get(index).getPublishedAt());
+//
+//                            Date fechaActual = new Date();
+//                            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+//                            String fechaString = formato.format(fechaActual);
+//                            signal.setCreatedAt(fechaString);
+//
+//                            serviceSignal.saveSignal(signal);
+//                            break;
+//                        }
+//
+//
+//                        index++;
+//                    }
+//
+//
+//
+////                    Signal signal = new Signal();
+////                    signal.setTitle(response.getArticles().get(0).getTitle());
+////                    signal.setDescription(response.getArticles().get(0).getDescription());
+////                    signal.setUrl(response.getArticles().get(0).getUrl());
+////                    signal.setUrlToImage(response.getArticles().get(0).getUrlToImage());
+////                    signal.setPublishedAt(response.getArticles().get(0).getPublishedAt());
+////                    Date fechaActual = new Date();
+////                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+////                    String fechaString = formato.format(fechaActual);
+////                    signal.setCreatedAt(fechaString);
+////                    serviceSignal.saveSignal(signal);
+//
+//                    System.out.println(response.getArticles().get(0).getTitle() + response.getArticles().get(0).getDescription() );
+//                }
+//
+//
+//                @Override
+//                public void onFailure(Throwable throwable) {
+//                    System.out.println(throwable.getMessage());
+//                }
+//            }
+//    );
 
 
     return new ResponseEntity<>( HttpStatus.CREATED);
