@@ -51,6 +51,12 @@ Recuerda personalizar este README con detalles específicos de tu proyecto, como
 
 Espero que este README te ayude a empezar con tu proyecto de Spring Boot que utiliza tanto MySQL como MongoDB. ¡Buena suerte con tu proyecto! Si tienes alguna otra pregunta o necesitas más ayuda, no dudes en preguntar.
 
+# Proyecto realizado por: 
+- Alejandro Londoño Pérez
+- Alexander Gallo López
+- Lina Valeria Medina Escobar
+- Juan Pablo Giraldo Tamayo
+
 
 
 
